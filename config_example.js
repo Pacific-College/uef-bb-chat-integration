@@ -1,5 +1,11 @@
 module.exports = {
-    // The base URL for this integration server, without trailing slash (example: http://localhost:3000)
+    // Hostname to listen on
+    listenHost: '0.0.0.0',
+
+    // Port number to listen on
+    listenPort: 8091,
+
+    // The base URL for this integration server, without trailing slash (example: http://localhost:8091)
     integrationUrl: '',
 
     // The application key retrieved from developer.blackboard.com.

@@ -4,12 +4,21 @@
   "description": "A sample integration using the Ultra Extension Framework",
   "main": "index.js",
   "scripts": {
-    "start": "node src/server.js"
+    "start": "node src/start.js"
   },
   "keywords": [],
   "author": "Blackboard",
   "license": "UNLICENSED",
   "dependencies": {
-    "express": "^4.17.1"
+    "core-js": "latest",
+    "ejs": "^2.6.2",
+    "express": "^4.17.1",
+    "node-fetch": "^2.6.0",
+    "regenerator-runtime": "^0.13.3"
+  },
+  "devDependencies": {
+    "@babel/core": "^7.5.5",
+    "@babel/preset-env": "^7.5.5",
+    "@babel/register": "^7.5.5"
   }
 }
