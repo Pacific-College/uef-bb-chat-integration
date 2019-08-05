@@ -31,16 +31,17 @@ app.post('/lti-launch', (req, res) => {
     res.redirect(authorizationCodeUrl);
 });
 
+// (2) After the OAuth2 authorization code workflow is complete, we receive the authorization code. Now, we need to
+// exchange the authorization code for an bearer token that we can use to authorize with Learn Ultra.
 app.get('/authorization-complete', (req, res) => {
 
 });
 
-
 /**
  * Builds a URL with query parameters
- * @param baseUrl
- * @param queryParams
- * @returns {string}
+ * @param baseUrl The URL of the request, including protocol, hostname, port
+ * @param queryParams The query parameters, as a map
+ * @returns {string} The joined URL
  */
 function buildUrl(baseUrl, queryParams) {
     const paramsString = Object.keys(queryParams)

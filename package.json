@@ -1,14 +1,14 @@
 {
   "name": "demo-integration",
   "version": "1.0.0",
-  "description": "",
+  "description": "A sample integration using the Ultra Extension Framework",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "start": "node src/server.js"
   },
   "keywords": [],
-  "author": "",
-  "license": "ISC",
+  "author": "Blackboard",
+  "license": "UNLICENSED",
   "dependencies": {
     "express": "^4.17.1"
   }
