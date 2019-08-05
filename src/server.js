@@ -2,7 +2,7 @@ import express from "express";
 import fetch from 'node-fetch';
 import config from '../config';
 
-const app = express();
+const app = configureApp();
 
 // (1) This endpoint receives the LTI launch from the LMS. From here, we will redirect to begin the OAuth2 workflow (see #2)
 app.post('/lti-launch', (req, res) => {
@@ -28,10 +28,12 @@ app.post('/lti-launch', (req, res) => {
     client_id: config.applicationKey,
   };
   const authorizationCodeUrl = buildUrl(
-    `${url.protocol}://${url.host}/learn/api/public/v1/oauth2/authorizationcode`,
+    `${url.protocol}//${url.host}/learn/api/public/v1/oauth2/authorizationcode`,
     authorizationCodeParams
   );
 
+  // Now we will redirect to begin the OAuth2 authorization code workflow. Once that workflow is done, Learn will return
+  // us to /authorization-complete (step #2).
   res.redirect(authorizationCodeUrl);
 });
 
@@ -52,16 +54,17 @@ app.get('/authorization-complete', async (req, res, next) => {
   // Build the authorization header, using the application key and secret
   const requestToken = Buffer.from(`${config.applicationKey}:${config.applicationSecret}`).toString('base64');
 
+  // Retrieve the authorization token from Learn
   const authorizationRequest = await fetch(
-    `${lmsHost}/learn/api/public/v1/oauth2/token`, {
+    buildUrl(`${lmsHost}/learn/api/public/v1/oauth2/token`, {
+      code: authorizationCode,
+      grant_type: 'authorization_code',
+      redirect_uri: redirectUri,
+    }), {
       method: 'POST',
-      body: JSON.stringify({
-        code: authorizationCode,
-        grant_type: 'authorization_code',
-        redirect_uri: redirectUri,
-      }),
       headers: {
         'Authorization': `Basic ${requestToken}`,
+        'Content-Type': 'application/x-www-form-urlencoded',
       },
     },
   );
@@ -79,17 +82,25 @@ app.get('/authorization-complete', async (req, res, next) => {
   return res.render('index', { authorizationToken, lmsHost });
 });
 
-// Set up the web server and start listening for requests
-const assetsDir = __dirname + '/assets';
-
-app.use(express.urlencoded({ extended: true }));
-app.use('/assets', express.static(assetsDir));
-app.set('view engine', 'ejs');
-app.set('views', assetsDir);
-
 app.listen(config.listenPort, () => {
   console.log(`Integration listening on port ${config.listenPort}`);
 });
+
+/**
+ * Creates and configures an Express application
+ * @returns {app}
+ */
+function configureApp() {
+  const app = express();
+  const integrationDir = __dirname + '/integration';
+
+  app.use(express.urlencoded({ extended: true }));
+  app.use('/assets', express.static(integrationDir));
+  app.set('view engine', 'ejs');
+  app.set('views', integrationDir);
+
+  return app;
+}
 
 /**
  * Builds a URL with query parameters
