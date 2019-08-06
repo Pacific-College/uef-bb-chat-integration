@@ -82,7 +82,8 @@ app.get('/authorization-complete', async (req, res, next) => {
   return res.render('integration', { authorizationToken, lmsHost });
 });
 
-app.get('/iframe-content', (req, res) => {
+// Returns the content that gets loaded within the panel's iframe.
+app.get('/iframe-panel', (req, res) => {
   return res.render('iframe');
 });
 

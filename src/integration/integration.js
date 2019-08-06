@@ -76,6 +76,7 @@ function onAuthorizedWithUltra() {
     // opened
     messageChannel.postMessage({
       type: 'portal:panel',
+      correlationId: 'panel-1',
       panelType: 'small',
       panelTitle: 'Demo Integration'
     });
@@ -84,17 +85,19 @@ function onAuthorizedWithUltra() {
 
 function renderPanelContents(message) {
   // (9) Notify Ultra to render our contents into the panel
-  panelId = message.data.portalId;
-  messageChannel.postMessage({
-    type: 'portal:render',
-    portalId: message.data.portalId,
-    contents: {
-      tag: 'iframe',
-      props: {
-        src: `${integrationHost}/iframe-content`,
+  if (message.data.correlationId === 'panel-1') {
+    panelId = message.data.portalId;
+    messageChannel.postMessage({
+      type: 'portal:render',
+      portalId: message.data.portalId,
+      contents: {
+        tag: 'iframe',
+        props: {
+          src: `${integrationHost}/iframe-panel`,
+        },
       },
-    },
-  });
+    });
+  }
 }
 
 // Sets up a way to communicate between the iframe and the integration script
@@ -105,11 +108,14 @@ function onEventFromIframe(evt) {
   }
 
   const message = JSON.parse(evt.newValue);
-  if (message.type === 'demo:close') {
-    messageChannel.postMessage({
-      type: 'portal:panel:close',
-      id: panelId,
-    });
+  switch (message.type) {
+    // Handles when the user clicks the "close panel" button
+    case 'demo:closePanel':
+      messageChannel.postMessage({
+        type: 'portal:panel:close',
+        id: panelId,
+      });
+      break;
   }
 }
 
@@ -126,12 +132,12 @@ class LoggedMessageChannel {
   }
 
   onMessage = (evt) => {
-    console.log(`From Learn Ultra:`, evt.data);
+    console.log(`[UEF] From Learn Ultra:`, evt.data);
     this.onmessage(evt);
   };
 
   postMessage = (msg) => {
-    console.log(`To Learn Ultra`, msg);
+    console.log(`[UEF] To Learn Ultra`, msg);
     this.messageChannel.postMessage(msg);
   }
 }
