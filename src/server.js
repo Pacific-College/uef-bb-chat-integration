@@ -1,6 +1,6 @@
-import express from "express";
 import fetch from 'node-fetch';
 import config from '../config';
+import {buildUrl, configureApp} from "./utils";
 
 const app = configureApp();
 
@@ -79,39 +79,13 @@ app.get('/authorization-complete', async (req, res, next) => {
   const authorizationToken = authorizationRequestBody.access_token;
 
   // Now that we have the authorization token, we can render the integration content
-  return res.render('index', { authorizationToken, lmsHost });
+  return res.render('integration', { authorizationToken, lmsHost });
+});
+
+app.get('/iframe-content', (req, res) => {
+  return res.render('iframe');
 });
 
 app.listen(config.listenPort, () => {
   console.log(`Integration listening on port ${config.listenPort}`);
 });
-
-/**
- * Creates and configures an Express application
- * @returns {app}
- */
-function configureApp() {
-  const app = express();
-  const integrationDir = __dirname + '/integration';
-
-  app.use(express.urlencoded({ extended: true }));
-  app.use('/assets', express.static(integrationDir));
-  app.set('view engine', 'ejs');
-  app.set('views', integrationDir);
-
-  return app;
-}
-
-/**
- * Builds a URL with query parameters
- * @param baseUrl The URL of the request, including protocol, hostname, port
- * @param queryParams The query parameters, as a map
- * @returns {string} The joined URL
- */
-function buildUrl(baseUrl, queryParams) {
-  const paramsString = Object.keys(queryParams)
-    .map(i => `${i}=${queryParams[i]}`)
-    .join('&');
-
-  return `${baseUrl}?${paramsString}`;
-}
