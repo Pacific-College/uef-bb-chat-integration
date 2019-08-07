@@ -48,12 +48,7 @@ function onMessageFromUltra(message) {
 
   // (6) On click, route, and hover messages, we will receive an event:event event
   if (message.data.type === 'event:event') {
-    switch (message.data.eventType) {
-      case 'click':
-      case 'hover':
-      case 'route':
-        break;
-    }
+    // From here, you can do something with those events...
   }
 
   // (8) Once Ultra has opened the panel, it will notify us that we can render into the panel
