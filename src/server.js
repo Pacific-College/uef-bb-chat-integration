@@ -1,10 +1,39 @@
+/*
+ * Copyright (C) 2019, Blackboard Inc.
+ * All rights reserved.
+ * Redistribution and use in source and binary forms, with or without
+ * modification, are permitted provided that the following conditions are met:
+ *
+ *  -- Redistributions of source code must retain the above copyright
+ *     notice, this list of conditions and the following disclaimer.
+ *
+ *  -- Redistributions in binary form must reproduce the above copyright
+ *     notice, this list of conditions and the following disclaimer in the
+ *     documentation and/or other materials provided with the distribution.
+ *
+ *  -- Neither the name of Blackboard Inc. nor the names of its contributors
+ *     may be used to endorse or promote products derived from this
+ *     software without specific prior written permission.
+ *
+ * THIS SOFTWARE IS PROVIDED BY BLACKBOARD INC ``AS IS'' AND ANY
+ * EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
+ * WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+ * DISCLAIMED. IN NO EVENT SHALL BLACKBOARD INC. BE LIABLE FOR ANY
+ * DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES
+ * (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
+ * LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND
+ * ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+ * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
+ * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+ */
+
 import fetch from 'node-fetch';
 import config from '../config';
 import {buildUrl, configureApp} from "./utils";
 
 const app = configureApp();
 
-// (1) This endpoint receives the LTI launch from the LMS. From here, we will redirect to begin the OAuth2 workflow (see #2)
+// (1) This endpoint receives the LTI launch from the LMS. From here, we will redirect to begin the OAuth2 workflow (see step #2)
 app.post('/lti-launch', (req, res) => {
   // Normally, you'd want to validate the LTI request you receive here. However, we will omit this as an exercise to
   // the reader (see Step 1-3 of https://www.imsglobal.org/wiki/step-1-lti-launch-request)
@@ -15,7 +44,7 @@ app.post('/lti-launch', (req, res) => {
   const url = new URL(req.body.launch_presentation_return_url);
 
   // Now, we will build the return URL that will point the user back to the integration after the OAuth2 workflow (the
-  // URL for #2).
+  // URL for  *2).
   const redirectUri = buildUrl(`${config.integrationUrl}/authorization-complete`, {
     lms_host: `${url.protocol}//${url.host}`,
   });
