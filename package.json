@@ -8,7 +8,7 @@
   },
   "keywords": [],
   "author": "Blackboard",
-  "license": "UNLICENSED",
+  "license": "SEE LICENSE IN LICENSE.txt",
   "dependencies": {
     "core-js": "latest",
     "ejs": "^2.6.2",
