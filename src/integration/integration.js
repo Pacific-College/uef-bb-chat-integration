@@ -4,6 +4,7 @@ if (!window.parent) {
 }
 
 const integrationHost = `${window.location.protocol}//${window.location.hostname}:${window.location.port}`;
+const shouldShowPanel = true;
 
 let messageChannel;
 let panelId;
@@ -66,16 +67,23 @@ function onAuthorizedWithUltra() {
     subscriptions: ['click', 'route'],
   });
 
-  setTimeout(() => {
-    // (7) For demo purposes, we will open a panel after 10 seconds. We send a message to Ultra requesting a panel be
-    // opened
-    messageChannel.postMessage({
-      type: 'portal:panel',
-      correlationId: 'panel-1',
-      panelType: 'small',
-      panelTitle: 'Demo Integration'
-    });
-  }, 10000);
+  if (shouldShowPanel) {
+    setTimeout(() => {
+      // (7) For demo purposes, we will open a panel. We send a message to Ultra requesting a panel be
+      // opened (if shouldShowPanel is enabled)
+      messageChannel.postMessage({
+        type: 'portal:panel',
+        correlationId: 'panel-1',
+        panelType: 'small',
+        panelTitle: 'Demo Integration',
+        attributes: {
+          onClose: {
+            callbackId: 'panel-1-close',
+          },
+        },
+      });
+    }, 2000);
+  }
 }
 
 function renderPanelContents(message) {
@@ -86,10 +94,24 @@ function renderPanelContents(message) {
       type: 'portal:render',
       portalId: message.data.portalId,
       contents: {
-        tag: 'iframe',
+        tag: 'span',
         props: {
-          src: `${integrationHost}/iframe-panel`,
+          style: {
+            display: 'flex',
+            height: '100%',
+            width: '100%',
+            flexDirection: 'column',
+            alignItems: 'stretch',
+            justifyContent: 'stretch',
+          },
         },
+        children: [{
+          tag: 'iframe',
+          props: {
+            style: {flex: '1 1 auto'},
+            src: `${integrationHost}/iframe-panel`,
+          },
+        }]
       },
     });
   }
