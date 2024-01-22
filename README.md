@@ -15,8 +15,8 @@ This project is an extension for Blackboard Ultra, designed to enhance the educa
 
 1. **Clone the Repository**
    ```
-   git clone [https://github.com/Pacific-College/uef-bb-chat-integration]
-   cd [uef-bb-chat-integration]
+   git clone https://github.com/Pacific-College/uef-bb-chat-integration
+   cd uef-bb-chat-integration
    ```
 
 2. **Install Dependencies**
