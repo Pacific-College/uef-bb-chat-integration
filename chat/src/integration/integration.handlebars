@@ -2,11 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Test Integration</title>
-    <script type="application/javascript">
-        window.__token = "{{authorizationToken}}";
-        window.__lmsHost = "{{lmsHost}}";
-    </script>
+    <title>Chat Integration</title>
     <script src="https://wchat.freshchat.com/js/widget.js"></script>
     <script type="application/javascript">
       // Verify that we're in the integration iframe
@@ -25,7 +21,8 @@
 
       // (1) Send the integration handshake message to Learn Ultra. This notifies Learn Ultra that the integration has
       // loaded and is ready to communicate.
-      window.parent.postMessage({"type": "integration:hello"}, `${window.__lmsHost}/*`);
+      const lmsHost = '{{lmsHost}}';
+      window.parent.postMessage({"type": "integration:hello"}, `${lmsHost}/*`);
 
       function onPostMessageReceived(evt) {
         console.log("Post Message Received", evt);
@@ -49,7 +46,7 @@
             type: 'authorization:authorize',
 
             // This token is passed in through integration.ejs
-            token: window.__token,
+            token: "{{authorizationToken}}",
           });
         }
       }
@@ -57,14 +54,9 @@
       function onMessageFromUltra(message) {
         // (4) If our authorization token was valid, Learn Ultra will send us a response, notifying us that the authorization
         // was successful
-        console.log("Message from Ultra", message);
+        console.log('Message Data from Ultra', message.data);
         if (message.data.type === 'authorization:authorize') {
           onAuthorizedWithUltra();
-        }
-
-        if (message.data.type == 'authorization:unauthorize') {
-          // send handshake again
-          window.parent.postMessage({"type": "integration:hello"}, `${window.__lmsHost}/*`);
         }
 
         // (7) On click, route, and hover messages, we will receive an event:event event
@@ -91,7 +83,7 @@
           window.open('https://google.com');
           sendMessage({
             "type": "help:request:response",
-            "correlationId": msg.data.correlationId
+            "correlationId": message.data.correlationId
           });
         }
       }
@@ -200,9 +192,9 @@
           this.onmessage(evt);
         };
 
-        postMessage = (msg) => {
-          console.log(`[UEF] To Learn Ultra`, msg);
-          this.messageChannel.postMessage(msg);
+        postMessage = (message) => {
+          console.log(`[UEF] To Learn Ultra`, message);
+          this.messageChannel.postMessage(message);
         }
       }
 
