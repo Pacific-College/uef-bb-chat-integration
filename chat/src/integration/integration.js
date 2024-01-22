@@ -1,39 +1,10 @@
-/*
- * Copyright (C) 2019, Blackboard Inc.
- * All rights reserved.
- * Redistribution and use in source and binary forms, with or without
- * modification, are permitted provided that the following conditions are met:
- *
- *  -- Redistributions of source code must retain the above copyright
- *     notice, this list of conditions and the following disclaimer.
- *
- *  -- Redistributions in binary form must reproduce the above copyright
- *     notice, this list of conditions and the following disclaimer in the
- *     documentation and/or other materials provided with the distribution.
- *
- *  -- Neither the name of Blackboard Inc. nor the names of its contributors
- *     may be used to endorse or promote products derived from this
- *     software without specific prior written permission.
- *
- * THIS SOFTWARE IS PROVIDED BY BLACKBOARD INC ``AS IS'' AND ANY
- * EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
- * WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
- * DISCLAIMED. IN NO EVENT SHALL BLACKBOARD INC. BE LIABLE FOR ANY
- * DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES
- * (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
- * LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND
- * ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
- * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
- * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
- */
-
 // Verify that we're in the integration iframe
 if (!window.parent) {
   throw new Error('Not within iframe');
 }
 
 const integrationHost = `${window.location.protocol}//${window.location.hostname}:${window.location.port}`;
-const shouldShowPanel = true;
+const shouldShowPanel = false;
 
 let messageChannel;
 let panelId;
@@ -76,14 +47,24 @@ function onMessageFromUltra(message) {
     onAuthorizedWithUltra();
   }
 
-  // (6) On click, route, and hover messages, we will receive an event:event event
+  // (7) On click, route, and hover messages, we will receive an event:event event
   if (message.data.type === 'event:event') {
     // From here, you can do something with those events...
   }
 
-  // (8) Once Ultra has opened the panel, it will notify us that we can render into the panel
+  // (9) Once Ultra has opened the panel, it will notify us that we can render into the panel
   if (message.data.type === 'portal:panel:response') {
     renderPanelContents(message);
+  }
+
+  // (10) When the help button has been clicked, we'll use the registered help provider
+  if (message.data.type === 'help:request') {
+    // for demo purposes we'll just open Google's home page
+    window.open('https://google.com');
+    sendMessage({
+      "type": "help:request:response",
+      "correlationId": message.data.correlationId
+    });
   }
 }
 
@@ -96,9 +77,18 @@ function onAuthorizedWithUltra() {
     subscriptions: ['click', 'route'],
   });
 
+  // (6) We can also register a help provider, such as a primary help provider that will overwrite the existing provider
+  messageChannel.postMessage({
+    type: 'help:register',
+    id: 'google-help-provider',
+    displayName: 'Google',
+    iconUrl: 'https://www.google.com/images/branding/googleg/1x/googleg_standard_color_128dp.png',
+    providerType: 'primary'
+  });
+
   if (shouldShowPanel) {
     setTimeout(() => {
-      // (7) For demo purposes, we will open a panel. We send a message to Ultra requesting a panel be
+      // (8) For demo purposes, we will open a panel. We send a message to Ultra requesting a panel be
       // opened (if shouldShowPanel is enabled)
       messageChannel.postMessage({
         type: 'portal:panel',
@@ -182,8 +172,8 @@ class LoggedMessageChannel {
     this.onmessage(evt);
   };
 
-  postMessage = (msg) => {
-    console.log(`[UEF] To Learn Ultra`, msg);
-    this.messageChannel.postMessage(msg);
+  postMessage = (message) => {
+    console.log(`[UEF] To Learn Ultra`, message);
+    this.messageChannel.postMessage(message);
   }
 }

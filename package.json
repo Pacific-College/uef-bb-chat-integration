@@ -1,24 +1,30 @@
 {
-  "name": "demo-integration",
+  "name": "bb-chat-integration",
   "version": "1.0.0",
-  "description": "A sample integration using the Ultra Extension Framework",
-  "main": "index.js",
-  "scripts": {
-    "start": "node src/start.js"
-  },
+  "description": "Blackboard Custom Chat - Ultra Extension Framework",
   "keywords": [],
-  "author": "Blackboard",
-  "license": "SEE LICENSE IN LICENSE.txt",
+  "author": "Miles Exner",
   "dependencies": {
     "core-js": "latest",
-    "ejs": "^2.6.2",
-    "express": "^4.17.1",
-    "node-fetch": "^2.6.0",
+    "express": "^4.18.2",
+    "express-handlebars": "^7.1.2",
+    "node-fetch": "^3.3.2",
+    "oauth-signature": "^1.5.0",
     "regenerator-runtime": "^0.13.3"
   },
   "devDependencies": {
     "@babel/core": "^7.5.5",
     "@babel/preset-env": "^7.5.5",
-    "@babel/register": "^7.5.5"
+    "@babel/register": "^7.5.5",
+    "aws-sdk": "^2.1090.0",
+    "serverless": "^3.38.0",
+    "serverless-dynamodb-local": "^0.2.40",
+    "serverless-esbuild": "^1.50.1",
+    "serverless-http": "^3.2.0",
+    "serverless-iam-roles-per-function": "^3.2.0",
+    "serverless-offline": "^12.0.4",
+    "serverless-plugin-canary-deployments": "^0.8.0",
+    "serverless-plugin-include-dependencies": "^5.1.0",
+    "serverless-plugin-tracing": "^2.0.0"
   }
 }

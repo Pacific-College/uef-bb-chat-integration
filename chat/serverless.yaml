@@ -1,0 +1,71 @@
+app: blackboard-integrations
+org: pacificcollege
+service: ultra-extensions
+
+plugins:
+  - serverless-esbuild
+  - serverless-iam-roles-per-function
+  - serverless-plugin-tracing
+  - serverless-dynamodb-local
+  - serverless-offline
+
+package:
+  individually: true
+  excludeDevDependencies: true
+  exclude:
+    - .webpack/**
+    - .serverless/**
+    - node_modules/**
+  include:
+    - src/integration/**
+    
+
+provider:
+  name: aws
+  runtime: nodejs16.x
+  lambdaHashingVersion: '20201221'
+  memorySize: 512
+  profile: pchs-serverless
+  deploymentMethod: direct
+
+  stage: ${opt:stage, 'production'}
+  region: ${opt:region, 'us-east-2'}
+
+  environment:
+    APP_KEY: ${param:app-key-${self:provider.stage}}
+    APP_SECRET: ${param:app-secret-${self:provider.stage}}
+    APP_URL: ${param:app-url-${self:provider.stage}}
+  
+  logs:
+    # Enable API Gateway logs
+    restApi: true
+
+functions:
+  ltiLaunch:
+    handler: src/ltiLaunch.handler
+    events:
+      - http:
+          path: lti-launch
+          method: post
+          cors: true
+
+  authorizationComplete:
+    handler: src/authComplete.handler
+    events:
+      - http:
+          path: authorization-complete
+          method: get
+          cors: true
+
+  iframePanel:
+    handler: src/iframePanel.handler
+    events:
+      - http:
+          path: iframe-panel
+          method: get
+          cors: true
+
+resources:
+  Resources:
+    # Define any additional AWS resources like DynamoDB tables, S3 buckets here
+

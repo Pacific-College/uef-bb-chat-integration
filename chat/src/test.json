@@ -1,0 +1,10 @@
+
+{
+  "resource": "/",
+  "path": "/ltiLaunch",
+  "httpMethod": "POST",
+  "body": "{\"lti_message_type\": \"basic-lti-launch-request\",\"lti_version\": \"LTI-1p0\",\"oauth_consumer_key\": \"F\",\"resource_link_id\": \"1\"}",
+  "headers": {
+    "Content-Type": "application/json"
+  }
+}
