@@ -11,6 +11,13 @@ const app = configureApp();
 app.get('/authorization-complete', async (req, res, next) => {
   const lmsHost = req.query.lms_host;
   const authorizationCode = req.query.code;
+  const isStudent = false;
+  const chatStaffUrl = process.env.CHAT_STAFF_URL || 'https://google.com';
+  const chatStudentUrl = process.env.CHAT_STUDENT_URL || 'https://google.com';
+  const chatRouteUrl = isStudent ? chatStudentUrl : chatStaffUrl;
+  const chatIconUrl = process.env.CHAT_ICON_URL || 'https://picsum.photos/125';
+  const chatDisplayName = process.env.CHAT_DISPLAY_NAME || 'Chat';
+  const stage = process.env.APP_STAGE || 'development';
 
   // Rebuild the redirect_uri, so we can supply it as part of the OAuth2 token request. The specification requires
   // us to supply the original redirect_uri as a security measure.
@@ -47,7 +54,7 @@ app.get('/authorization-complete', async (req, res, next) => {
   const authorizationToken = authorizationRequestBody.access_token;
 
   // Now that we have the authorization token, we can render the integration content
-  return res.render('integration', { authorizationToken, lmsHost });
+  return res.render('integration', { authorizationToken, lmsHost, chatIconUrl, chatRouteUrl, chatDisplayName, stage });
 });
 
 const handler = serverless(app);

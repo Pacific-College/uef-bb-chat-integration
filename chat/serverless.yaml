@@ -35,6 +35,12 @@ provider:
     APP_KEY: ${param:app-key-${self:provider.stage}}
     APP_SECRET: ${param:app-secret-${self:provider.stage}}
     APP_URL: ${param:app-url-${self:provider.stage}}
+    APP_STAGE: ${self:provider.stage}
+    CHAT_ICON_URL: ${param:chat-icon-url}
+    CHAT_STUDENT_URL: ${param:chat-student-url}
+    CHAT_STAFF_URL: ${param:chat-staff-url}
+    CHAT_DISPLAY_NAME: ${param:chat-display-name}
+    FC_TOKEN: ${param:fc-token}
   
   logs:
     # Enable API Gateway logs

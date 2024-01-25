@@ -66,7 +66,8 @@ app.post('/lti-launch', (req, res) => {
 
     // Check that the user is either a Learner or an Instructor
     const roles = parseRoles(req.body.roles);
-    isValid = roles.includes('urn:lti:role:ims/lis/Learner') || roles.includes('urn:lti:role:ims/lis/Instructor') || roles.includes('urn:lti:sysrole:ims/lis/Administrator');
+    isValid = roles && roles.length > 0;
+    // isValid = roles.includes('urn:lti:role:ims/lis/Learner') || roles.includes('urn:lti:role:ims/lis/Instructor') || roles.includes('urn:lti:sysrole:ims/lis/Administrator');
   }
 
   if (!isValid) {
