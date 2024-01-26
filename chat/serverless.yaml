@@ -41,10 +41,28 @@ provider:
     CHAT_STAFF_URL: ${param:chat-staff-url}
     CHAT_DISPLAY_NAME: ${param:chat-display-name}
     FC_TOKEN: ${param:fc-token}
+    UEF_SCHEMA: UefTable-${self:provider.stage}
   
   logs:
     # Enable API Gateway logs
     restApi: true
+
+iamRoleStatements:
+  - Effect: Allow
+    Action:
+      - xray:PutTelemetryRecords
+      - xray:PutTraceSegments
+    Resource: !GetAtt PreBsnQueueTable.Arn
+  - Effect: Allow
+    Action:
+      - dynamodb:DescribeTable
+      - dynamodb:Query
+      - dynamodb:Scan
+      - dynamodb:GetItem
+      - dynamodb:PutItem
+      - dynamodb:UpdateItem
+      - dynamodb:DeleteItem
+    Resource: arn:aws:dynamodb:${self:provider.region}:*:table/${self:provider.environment.UEF_USER_SCHEMA}
 
 functions:
   ltiLaunch:
@@ -73,5 +91,21 @@ functions:
 
 resources:
   Resources:
-    # Define any additional AWS resources like DynamoDB tables, S3 buckets here
+    UserTable:
+      Type: AWS::DynamoDB::Table
+      Properties:
+        AttributeDefinitions:
+          - AttributeName: hashId
+            AttributeType: S
+          - AttributeName: role
+            AttributeType: S
+        KeySchema:
+          - AttributeName: hashId
+            KeyType: HASH
+          - AttributeName: role
+            KeyType: RANGE
+        BillingMode: PAY_PER_REQUEST
+        StreamSpecification:
+          StreamViewType: NEW_IMAGE
+        TableName: ${self:provider.environment.UEF_SCHEMA}
 
