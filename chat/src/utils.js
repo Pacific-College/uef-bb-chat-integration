@@ -2,6 +2,7 @@ import express from "express";
 import path from 'path';
 import bodyParser from 'body-parser';
 import { engine } from 'express-handlebars';
+import crypto from 'crypto';
 
 /**
  * Creates and configures an Express application
@@ -12,7 +13,7 @@ export function configureApp() {
   app.use(bodyParser.urlencoded({ extended: true }));
   const integrationDir = path.join(__dirname, '/integration');
 
-  app.use(express.urlencoded({extended: true}));
+  app.use(express.urlencoded({ extended: true }));
   app.use('/assets', express.static(integrationDir));
   app.use(express.json());
   app.engine('handlebars', engine({ defaultLayout: false }));
@@ -34,4 +35,71 @@ export function buildUrl(baseUrl, queryParams) {
     .join('&');
 
   return `${baseUrl}?${paramsString}`;
+}
+
+export const HMAC_SHA1 = {
+  buildSignatureRaw: function ({
+    url,
+    method,
+    params,
+    appSecret,
+    token
+  }) {
+    const sig = [
+      method.toUpperCase(),
+      specialEncode(url),
+      cleanRequestBody(params)
+    ];
+    
+    return this.signString(sig.join('&'), appSecret, token);
+  },
+
+  signString: function (str, key, token) {
+    console.log('str', str)
+    key = `${key}&`;
+    if (token) {
+      key += token;
+    }
+    console.log('key', key)
+    return crypto.createHmac('sha1', key).update(str).digest('base64');
+  }
+};
+
+function specialEncode(str) {
+  // Implement special encoding (RFC 3986)
+  return encodeURIComponent(str).replace(/[!'()*]/g, char => '%' + char.charCodeAt(0).toString(16));
+}
+
+function cleanRequestBody(body) {
+  let cleanParams, encodeParam, out;
+    out = [];
+    encodeParam = function(key, val) {
+      const encodeParam = key + '=' + specialEncode(val)
+      console.log('encodeParam', encodeParam)
+      return encodeParam;
+    };
+    cleanParams = function(params) {
+      let i, key, len, val, vals;
+      if (typeof params !== 'object') {
+        return;
+      }
+      for (key in params) {
+        vals = params[key];
+        if (key === 'oauth_signature') {
+          continue;
+        }
+        if (!params.hasOwnProperty(key)) continue;
+        if (Array.isArray(vals) === true) {
+          for (i = 0, len = vals.length; i < len; i++) {
+            val = vals[i];
+            out.push(encodeParam(key, val));
+          }
+        } else {
+          out.push(encodeParam(key, vals));
+        }
+      }
+    };
+    cleanParams(body);
+    console.log('out', out.sort())
+    return specialEncode(out.sort().join('&'));
 }

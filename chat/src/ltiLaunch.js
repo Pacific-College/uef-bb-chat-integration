@@ -1,6 +1,7 @@
 import { configureApp, buildUrl } from "./utils";
 import serverless from 'serverless-http';
-import OAuthSignature from 'oauth-signature';
+import { URL } from 'url';
+import { HMAC_SHA1 } from './utils';
 import config from './config';
 
 const app = configureApp();
@@ -9,7 +10,7 @@ const app = configureApp();
 app.post('/lti-launch', (req, res) => {
   // Normally, you'd want to validate the LTI request you receive here. However, we will omit this as an exercise to
   // the reader (see Step 1-3 of https://www.imsglobal.org/wiki/step-1-lti-launch-request)
-  
+
   // Validate the LTI launch request
   // Step 1
   let isValidLtiRequest = req.method === 'POST';
@@ -23,27 +24,27 @@ app.post('/lti-launch', (req, res) => {
     return res.status(400).send('Invalid LTI launch request');
   }
 
-  // Step 2
+  // Step 2 - Validate the OAuth signature
   try {
-    const applicationKey = process.env.APP_KEY;
-    const applicationSecret = process.env.APP_SECRET;
-    if (!applicationKey || !applicationSecret) {
-      throw new Error('Missing application key or secret');
+    const appSecret = process.env.APP_SECRET;
+    if (!appSecret) {
+      throw new Error('Missing app secret or app key');
     }
-    const httpMethod = req.method;
-    const url = req.protocol + '://' + req.get('host') + req.originalUrl;
-    const parameters = req.body; // All POST parameters
-    const tokenSecret = null; // No token secret for PLAINTEXT or HMAC-SHA1
 
-    // Generate the signature
-    const encodedSignature = OAuthSignature.generate(httpMethod, url, parameters, applicationSecret, tokenSecret, { encodeSignature: false });
+    const requestUrl = `${req.protocol}://${req.get('host')}${req.originalUrl}`;
+    console.log(requestUrl)
+    const signatureData = {
+      url: requestUrl,
+      method: req.method,
+      params: req.body,
+      appSecret: appSecret,
+      token: ''
+    };
+    const signature = HMAC_SHA1.buildSignatureRaw(signatureData);
 
-    // Compare the generated signature with the one received in the request
-    // if (encodedSignature !== req.body.oauth_signature) {
-    //   throw new Error('Invalid OAuth signature');
-    // }
-
-    // Further processing...
+    if (signature === req.body.oauth_signature) {
+      res.send('Oauth signature is valid');
+    }
   } catch (error) {
     return res.status(403).send(error.message);
   }

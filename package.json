@@ -9,7 +9,6 @@
     "express": "^4.18.2",
     "express-handlebars": "^7.1.2",
     "node-fetch": "^3.3.2",
-    "oauth-signature": "^1.5.0",
     "regenerator-runtime": "^0.13.3"
   },
   "devDependencies": {
