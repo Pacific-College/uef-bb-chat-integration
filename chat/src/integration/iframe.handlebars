@@ -3,32 +3,12 @@
 
 <head>
   <meta charset="UTF-8">
-  <title>College Chat</title>
+  <title>PCHS BB Support</title>
   <script src="https://snippets.freshchat.com/js/fc-pre-chat-form-v2.js"></script>
   <script type="application/javascript">
-    var preChatTemplate = {
-      mainbgColor: '#0aa4db',
-      maintxColor: '#fff',
-      heading: 'Chat With Us',
-      textBanner: '',
-      SubmitLabel: 'Start Chat',
-      fields: {
-        field1: {
-          type: "name",
-          label: "Name",
-          fieldId: "name",
-          required: "yes",
-          error: "Please Enter a valid name"
-        },
-        field2: {
-          type: "email",
-          label: "Email",
-          fieldId: "email",
-          required: "yes",
-          error: "Please Enter a valid Email"
-        },
-      }
-    };
+    const firstName = window.localStorage.getItem('firstName') || '';
+    const lastName = window.localStorage.getItem('lastName') || '';
+    const email = window.localStorage.getItem('email') || '';
     window.fcSettings = {
       token: "{{fcToken}}",
       host: "https://wchat.freshchat.com",
@@ -37,43 +17,24 @@
         cssNames: {
           widget: 'custom_fc_frame',
           expanded: 'custom_fc_expanded'
+        },
+        messenger: {
+          firstName,
+          lastName,
+          email
         }
       },
       onInit: function () {
         console.log('widget init');
-        fcPreChatform.fcWidgetInit(preChatTemplate);
+        window.fcWidget.user.setProperties({
+          firstName,
+          lastName,
+          email
+        });
       }
     };
   </script>
   <script src="https://wchat.freshchat.com/js/widget.js" async></script>
-  <style>
-    /* 0. Custom Freshservice Chat*/
-    .chat-fc-form-outer div.fc-form ul li label {
-      top: -20px !important;
-    }
-
-    .chat-fc-form-outer div.fc-form ul li {
-      margin-bottom: 35px !important;
-    }
-
-    div.chat-fc-form-outer {
-      right: auto !important;
-    }
-
-    #fc_frame,
-    #fc_frame.fc-widget-normal {
-      right: auto !important;
-      left: 15px;
-    }
-
-    #page-mod-quiz-comment .mform {
-      padding-bottom: 100px;
-    }
-  </style>
-  <script type="application/javascript">
-
-    
-  </script>
   <script type="application/javascript">
     function sendToIntegration(message) {
       window.localStorage.setItem('event', JSON.stringify({
@@ -94,6 +55,14 @@
       });
     });
   </script>
+  <style>
+    #fc_frame,
+    #fc_frame.fc-widget-normal {
+      right: auto !important;
+      left: -30px;
+      top: 0;
+    }
+  </style>
 </head>
 
 <body>

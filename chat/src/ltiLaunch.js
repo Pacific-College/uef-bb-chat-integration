@@ -86,6 +86,9 @@ app.post('/lti-launch', (req, res) => {
   // Now, we will build the return URL that will point the user back to the integration after the OAuth2 workflow (the
   // URL for  *2).
   const redirectUri = buildUrl(`${config.integrationUrl}/authorization-complete`, {
+    lis_person_name_given: req.body.lis_person_name_given || '',
+    lis_person_name_family: req.body.lis_person_name_family || '',
+    lis_person_contact_email_primary: req.body.lis_person_contact_email_primary || '',
     lms_host: `${url.protocol}//${url.host}`,
   });
 
@@ -96,6 +99,7 @@ app.post('/lti-launch', (req, res) => {
     response_type: 'code',
     client_id: config.applicationKey,
   };
+
   const authorizationCodeUrl = buildUrl(
     `${url.protocol}//${url.host}/learn/api/public/v1/oauth2/authorizationcode`,
     authorizationCodeParams

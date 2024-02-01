@@ -9,6 +9,9 @@ const app = configureApp();
 // exchange the authorization code for an bearer token that we can use to authorize with Learn Ultra. Once we have the
 // authorization token, we can start loading the integration.
 app.get('/authorization-complete', async (req, res, next) => {
+  const lisPersonNameGiven = req.query.lis_person_name_given;
+  const lisPersonNameFamily = req.query.lis_person_name_family;
+  const lisPersonContactEmailPrimary = req.query.lis_person_contact_email_primary;
   const lmsHost = req.query.lms_host;
   const authorizationCode = req.query.code;
   const isStudent = false;
@@ -22,9 +25,12 @@ app.get('/authorization-complete', async (req, res, next) => {
   // Rebuild the redirect_uri, so we can supply it as part of the OAuth2 token request. The specification requires
   // us to supply the original redirect_uri as a security measure.
   const lmsUrl = new URL(lmsHost);
-  const redirectUri = buildUrl(`${config.integrationUrl}/authorization-complete`, {
+  const redirectUri = encodeURIComponent(buildUrl(`${config.integrationUrl}/authorization-complete`, {
+    lis_person_name_given: lisPersonNameGiven,
+    lis_person_name_family: lisPersonNameFamily,
+    lis_person_contact_email_primary: lisPersonContactEmailPrimary,
     lms_host: `${lmsUrl.protocol}//${lmsUrl.host}`,
-  });
+  }));
 
   // Build the authorization header, using the application key and secret
   const requestToken = Buffer.from(`${config.applicationKey}:${config.applicationSecret}`).toString('base64');
@@ -54,7 +60,17 @@ app.get('/authorization-complete', async (req, res, next) => {
   const authorizationToken = authorizationRequestBody.access_token;
 
   // Now that we have the authorization token, we can render the integration content
-  return res.render('integration', { authorizationToken, lmsHost, chatIconUrl, chatRouteUrl, chatDisplayName, stage });
+  return res.render('integration', { 
+    authorizationToken,
+    lmsHost,
+    lisPersonNameGiven,
+    lisPersonNameFamily,
+    lisPersonContactEmailPrimary,
+    chatIconUrl,
+    chatRouteUrl,
+    chatDisplayName,
+    stage
+  });
 });
 
 const handler = serverless(app);

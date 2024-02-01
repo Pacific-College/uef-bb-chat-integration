@@ -4,6 +4,9 @@
     <meta charset="UTF-8">
     <title>Chat Integration</title>
     <script type="application/javascript">
+      window.localStorage.setItem('firstName', '{{lisPersonNameGiven}}');
+      window.localStorage.setItem('lastName', '{{lisPersonNameFamily}}');
+      window.localStorage.setItem('email', '{{lisPersonContactEmailPrimary}}');
       // Verify that we're in the integration iframe
       if (!window.parent) {
         throw new Error('Not within iframe');
@@ -26,12 +29,10 @@
       function onPostMessageReceived(evt) {
         console.log("Post Message Received", evt);
         // Do some basic message validation.
-        /*
-        const fromTrustedHost = evt.origin === window.__lmsHost || evt.origin === integrationHost;
+        const fromTrustedHost = evt.origin === lmsHost || evt.origin === integrationHost;
         if (!fromTrustedHost || !evt.data || !evt.data.type) {
           return;
         }
-        */
 
         // (2) A majority of the communication between the integration and Learn Ultra will be over a "secure" MessageChannel.
         // As response to the integration handshake, Learn Ultra will send a MessageChannel port to the integration.
@@ -66,7 +67,7 @@
             type: 'portal:panel',
             correlationId: 'panel-1',
             panelType: 'small',
-            panelTitle: 'College Support',
+            panelTitle: 'PCHS BB Support',
             attributes: {
               onClose: {
                 callbackId: 'panel-1-close',
