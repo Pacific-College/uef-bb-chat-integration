@@ -4,27 +4,6 @@
 <head>
   <meta charset="UTF-8">
   <title>PCHS BB Support</title>
-  <script>
-    document.addEventListener("DOMContentLoaded", function () {
-      function hideSpinner() {
-        const spinner = document.getElementById('spinner');
-        if (spinner) {
-          spinner.style.display = 'none';
-        }
-      };
-
-      const observer = new MutationObserver(function (mutations) {
-        mutations.forEach(function (mutation) {
-          if (document.getElementById('fc_widget')) {
-            hideSpinner();
-            observer.disconnect();
-          }
-        });
-      });
-
-      observer.observe(document.body, { childList: true, subtree: true });
-    });
-  </script>
   <script src="https://snippets.freshchat.com/js/fc-pre-chat-form-v2.js"></script>
   <script type="application/javascript">
     const firstName = window.localStorage.getItem('firstName') || '';
@@ -51,6 +30,7 @@
           lastName,
           email
         });
+        document.getElementById('fc_chat_welcome').style.display = 'none';
       }
     };
   </script>
@@ -62,34 +42,17 @@
       left: -30px;
       top: 0;
     }
-
-    .spinner {
-      border: 4px solid rgba(0, 0, 0, .1);
-      width: 40px;
-      height: 40px;
-      border-radius: 50%;
-      border-left-color: #09f;
-      animation: spin 1s ease infinite;
-      position: fixed;
+    .fc_chat_welcome {
+      position: absolute;
       top: 50%;
-      left: 50%;
-      transform: translate(-50%, -50%);
-    }
-
-    @keyframes spin {
-      0% {
-        transform: rotate(0deg);
-      }
-
-      100% {
-        transform: rotate(360deg);
-      }
+      transform: translateY(-50%);
     }
   </style>
 </head>
 
 <body>
-  <div id="spinner" class="spinner"></div>
+  <div id="fc_chat_welcome">
+    <h2>Please wait a moment while the chat window loads...</h2>
+  </div>
 </body>
-
 </html>
