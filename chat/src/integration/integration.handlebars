@@ -27,7 +27,7 @@
       window.parent.postMessage({"type": "integration:hello"}, `${lmsHost}/*`);
 
       function onPostMessageReceived(evt) {
-        console.log("Post Message Received", evt);
+        // console.log("Post Message Received", evt);
         // Do some basic message validation.
         const fromTrustedHost = evt.origin === lmsHost || evt.origin === integrationHost;
         if (!fromTrustedHost || !evt.data || !evt.data.type) {
@@ -87,7 +87,7 @@
       }
 
       function onAuthorizedWithUltra() {
-        console.log('Authorization was successful');
+        // console.log('Authorization was successful');
 
         // Once we are authorized, we can subscribe to events, such as telemetry events
         messageChannel.postMessage({
@@ -169,18 +169,17 @@
         }
 
         onMessage = (evt) => {
-          console.log(`[UEF] From Learn Ultra:`, evt.data);
+          // console.log(`[UEF] From Learn Ultra:`, evt.data);
           this.onmessage(evt);
         };
 
         postMessage = (message) => {
-          console.log(`[UEF] To Learn Ultra`, message);
+          // console.log(`[UEF] To Learn Ultra`, message);
           this.messageChannel.postMessage(message);
         }
       }
 
     </script>
-    {{!-- <script type="application/javascript" src="https://ultra-extensions-js.s3.us-east-2.amazonaws.com/integration.js"></script> --}}
 </head>
 <body>
     Integration has loaded. This content will not be visible to the end-user

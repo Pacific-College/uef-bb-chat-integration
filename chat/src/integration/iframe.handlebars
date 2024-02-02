@@ -4,6 +4,27 @@
 <head>
   <meta charset="UTF-8">
   <title>PCHS BB Support</title>
+  <script>
+    document.addEventListener("DOMContentLoaded", function () {
+      function hideSpinner() {
+        const spinner = document.getElementById('spinner');
+        if (spinner) {
+          spinner.style.display = 'none';
+        }
+      };
+
+      const observer = new MutationObserver(function (mutations) {
+        mutations.forEach(function (mutation) {
+          if (document.getElementById('fc_widget')) {
+            hideSpinner();
+            observer.disconnect();
+          }
+        });
+      });
+
+      observer.observe(document.body, { childList: true, subtree: true });
+    });
+  </script>
   <script src="https://snippets.freshchat.com/js/fc-pre-chat-form-v2.js"></script>
   <script type="application/javascript">
     const firstName = window.localStorage.getItem('firstName') || '';
@@ -25,7 +46,6 @@
         }
       },
       onInit: function () {
-        console.log('widget init');
         window.fcWidget.user.setProperties({
           firstName,
           lastName,
@@ -35,26 +55,6 @@
     };
   </script>
   <script src="https://wchat.freshchat.com/js/widget.js" async></script>
-  <script type="application/javascript">
-    function sendToIntegration(message) {
-      window.localStorage.setItem('event', JSON.stringify({
-        ...message,
-
-        // Add a timestamp to always force the value to change; otherwise, if the storage value doesn't change, we don't
-        // get the storage event.
-        ts: new Date() * Math.random(),
-      }));
-    }
-
-    document.addEventListener('DOMContentLoaded', () => {
-      document.getElementsByClassName('close-button').item(0).addEventListener('click', () => {
-        // This notifies the integration script (see step #10) that the close button was clicked
-        sendToIntegration({
-          type: 'demo:closePanel'
-        });
-      });
-    });
-  </script>
   <style>
     #fc_frame,
     #fc_frame.fc-widget-normal {
@@ -62,10 +62,34 @@
       left: -30px;
       top: 0;
     }
+
+    .spinner {
+      border: 4px solid rgba(0, 0, 0, .1);
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      border-left-color: #09f;
+      animation: spin 1s ease infinite;
+      position: fixed;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+    }
+
+    @keyframes spin {
+      0% {
+        transform: rotate(0deg);
+      }
+
+      100% {
+        transform: rotate(360deg);
+      }
+    }
   </style>
 </head>
 
 <body>
+  <div id="spinner" class="spinner"></div>
 </body>
 
 </html>
