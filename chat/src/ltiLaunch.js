@@ -32,7 +32,6 @@ app.post('/lti-launch', (req, res) => {
     }
 
     const requestUrl = `${req.protocol}://${req.get('host')}${req.originalUrl}`;
-    console.log(requestUrl)
     const signatureData = {
       url: requestUrl,
       method: req.method,
