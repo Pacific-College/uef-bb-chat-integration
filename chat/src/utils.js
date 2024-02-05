@@ -55,12 +55,10 @@ export const HMAC_SHA1 = {
   },
 
   signString: function (str, key, token) {
-    console.log('str', str)
     key = `${key}&`;
     if (token) {
       key += token;
     }
-    console.log('key', key)
     return crypto.createHmac('sha1', key).update(str).digest('base64');
   }
 };
@@ -75,7 +73,6 @@ function cleanRequestBody(body) {
     out = [];
     encodeParam = function(key, val) {
       const encodeParam = key + '=' + specialEncode(val)
-      console.log('encodeParam', encodeParam)
       return encodeParam;
     };
     cleanParams = function(params) {
@@ -100,6 +97,5 @@ function cleanRequestBody(body) {
       }
     };
     cleanParams(body);
-    console.log('out', out.sort())
     return specialEncode(out.sort().join('&'));
 }
