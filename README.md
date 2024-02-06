@@ -31,9 +31,10 @@ This project is an extension for Blackboard Ultra, designed to enhance the educa
    Note down the API endpoint provided after deployment.
 
 4. **Blackboard Ultra Configuration**
-   - Log in to your Blackboard Ultra account.
+   - Log in to your Blackboard Ultra Developer account.
+   - Create a new application and add the application key, secret, and id to your serverless parameters.
    - Navigate to the extensions management area.
-   - Add a new extension and provide the API endpoint from the deployment step.
+   - Add a new LTI, placement and new REST API using the parameters parameters assigned to your application.
 
 ## Configuration
 
