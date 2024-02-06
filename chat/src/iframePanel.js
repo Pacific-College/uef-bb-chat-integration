@@ -6,7 +6,8 @@ const app = configureApp();
 // Returns the content that gets loaded within the panel's iframe.
 app.get('/iframe-panel', (req, res) => {
   const fcToken = process.env.FC_TOKEN || '';
-  return res.render('iframe', { fcToken});
+  const widgetId = process.env.WIDGET_ID || '';
+  return res.render('iframe', { fcToken, widgetId });
 });
 
 const handler = serverless(app);

@@ -5,42 +5,44 @@
   <meta charset="UTF-8">
   <title>PCHS BB Support</title>
   <script src="https://snippets.freshchat.com/js/fc-pre-chat-form-v2.js"></script>
-  <script type="application/javascript">
-    const firstName = window.localStorage.getItem('firstName') || '';
-    const lastName = window.localStorage.getItem('lastName') || '';
-    const email = window.localStorage.getItem('email') || '';
-    window.fcSettings = {
-      token: "{{fcToken}}",
-      host: "https://wchat.freshchat.com",
-      open: true,
-      config: {
-        cssNames: {
-          widget: 'custom_fc_frame',
-          expanded: 'custom_fc_expanded'
+    <script type="application/javascript">
+      const firstName = window.localStorage.getItem('firstName') || '';
+      const lastName = window.localStorage.getItem('lastName') || '';
+      const email = window.localStorage.getItem('email') || '';
+      window.fcSettings = {
+        token: "{{fcToken}}",
+        host: "https://wchat.freshchat.com",
+        open: true,
+        widgetUuid: "{{widgetId}}",
+        config: {
+          cssNames: {
+            widget: 'custom_fc_frame',
+            expanded: 'custom_fc_expanded'
+          },
+          messenger: {
+            firstName,
+            lastName,
+            email
+          }
         },
-        messenger: {
-          firstName,
-          lastName,
-          email
+        onInit: function () {
+          window.fcWidget.user.setProperties({
+            firstName,
+            lastName,
+            email
+          });
+          document.getElementById('fc_chat_welcome').style.display = 'none';
         }
-      },
-      onInit: function () {
-        window.fcWidget.user.setProperties({
-          firstName,
-          lastName,
-          email
-        });
-        document.getElementById('fc_chat_welcome').style.display = 'none';
-      }
-    };
-  </script>
+      };
+    </script>
   <script src="https://wchat.freshchat.com/js/widget.js" async></script>
   <style>
     #fc_frame,
     #fc_frame.fc-widget-normal {
       right: auto !important;
-      left: -30px;
-      top: 0;
+      left: -30px !important;
+      top: 0 !important;
+      bottom: 0 !important;
     }
     .fc_chat_welcome {
       position: absolute;

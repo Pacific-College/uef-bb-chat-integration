@@ -41,6 +41,7 @@ provider:
     CHAT_STAFF_URL: ${param:chat-staff-url}
     CHAT_DISPLAY_NAME: ${param:chat-display-name}
     FC_TOKEN: ${param:fc-token}
+    WIDGET_ID: ${param:widget-id}
   
   logs:
     # Enable API Gateway logs
